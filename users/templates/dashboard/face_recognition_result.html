@@ -1,0 +1,11 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+  {% if matching_post %}
+    <h2>Matching Post</h2>
+    <img style="width: 200px; height: 200px;" src="{{ matching_post.photo.url }}" alt="Matching Photo">
+    <p>{{ matching_post.text }}</p>
+  {% elif no_match %}
+    <p>No matching post found.</p>
+  {% endif %}
+{% endblock %}

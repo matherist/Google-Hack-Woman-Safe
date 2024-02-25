@@ -1,0 +1,47 @@
+<!-- dashboard/face_recognition.html -->
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+  <h2>Face Recognition</h2>
+  <form method="post" enctype="multipart/form-data" id="faceRecognitionForm">
+    {% csrf_token %}
+    <label for="uploaded_image">Upload a photo:</label>
+    <input type="file" name="uploaded_image" accept="image/*" required>
+    <br>
+    <button type="submit">Search</button>
+  </form>
+
+  <div id="result" style="display:none">
+    <h3>Result:</h3>
+    <img id="resultPhoto" alt="Result Photo">
+    <p id="resultText"></p>
+  </div>
+
+  <script>
+    document.getElementById('faceRecognitionForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+
+      fetch('/face_recognition/', {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        var resultDiv = document.getElementById('result');
+        var resultPhoto = document.getElementById('resultPhoto');
+        var resultText = document.getElementById('resultText');
+
+        if (data.found) {
+          resultDiv.style.display = 'block';
+          resultPhoto.src = data.photo_url;
+          resultText.textContent = data.text;
+        } else {
+          resultDiv.style.display = 'none';
+          alert('No similar face found in the database.');
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+{% endblock %}
